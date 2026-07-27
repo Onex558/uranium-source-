@@ -78,9 +78,7 @@ a.game-card:visited{color:inherit;}
     </div>
 
     <div class="filter-bar" id="filterBar">
-        <button class="filter-btn active" data-source="all">All</button>
-        <button class="filter-btn" data-source="Custom">Uranium</button>
-        <button class="filter-btn" data-source="GN Math Zone">GN Math</button>
+    
     </div>
 
     <div id="gameCount" class="game-count">— Games</div>
@@ -161,16 +159,8 @@ const customGames = [
 
 
 ];
-const sources = [
-    {
-        name: "GN Math Zone",
-        type: "json",
-        json: "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json",
-        cover: "https://cdn.jsdelivr.net/gh/freebuisness/covers@main",
-        html: "https://cdn.jsdelivr.net/gh/freebuisness/html@main"
-    }
-];
-
+const sources = [];
+    
 function renderGames(list) {
     gameCountEl.textContent = list.length + " Games";
     gamesGrid.innerHTML = '';
