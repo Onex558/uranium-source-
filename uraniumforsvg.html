@@ -116,10 +116,36 @@ let currentBlobUrl = null;
 let currentFilter = 'all';
 
 const customGames = [
-    { name: "Balatro", sourceName: "Custom", author: "Local", resolvedCover: "/gameFiles/balatro/baltro.jpg", resolvedUrl: "https://cdn.jsdelivr.net/gh/Sea-Math/game-files@main/balatro.svg" },
-    { name: "Shotgun Mario 64", sourceName: "Custom", author: "Nintendo", resolvedCover: "https://cdn.jsdelivr.net/gh/Onex558/retro-games-@main/OIP.jpg", resolvedUrl: "https://cdn.jsdelivr.net/gh/Onex558/retro-games-@main/shotgunmario64.html" }
-];
+    { name:"Doom", sourceName:"Custom", author:"id Software", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/doom.html" },
+    { name:"Doom 2", sourceName:"Custom", author:"id Software", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/doom2.html" },
+    { name:"Doom 3", sourceName:"Custom", author:"id Software", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/doom3.html" },
+    { name:"Doom 64", sourceName:"Custom", author:"Midway Games", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/doom64.html" },
+    { name:"Doom RPG", sourceName:"Custom", author:"id Software", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/doomrpg.html" },
 
+    { name:"Gran Turismo 2", sourceName:"Custom", author:"Polyphony Digital", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/gt2.html" },
+    { name:"GTA Advance", sourceName:"Custom", author:"Rockstar Games", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/gtaa.html" },
+    { name:"GTA China", sourceName:"Custom", author:"Rockstar Games", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/gtachina.html" },
+    { name:"GTA Vice City Stories", sourceName:"Custom", author:"Rockstar Games", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/gtavcs.html" },
+
+    { name:"Happy Wheels", sourceName:"Custom", author:"Fancy Force", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/happywheels.html" },
+    { name:"Journey", sourceName:"Custom", author:"thatgamecompany", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/journey.html" },
+
+    { name:"LEGO Star Wars", sourceName:"Custom", author:"Traveller's Tales", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/lsw.html" },
+    { name:"LEGO Star Wars 2", sourceName:"Custom", author:"Traveller's Tales", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/lsw2.html" },
+
+    { name:"Super Mario World", sourceName:"Custom", author:"Nintendo", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/smw.html" },
+    { name:"Scribblenauts", sourceName:"Custom", author:"5th Cell", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/scribblenauts.html" },
+    { name:"Opposing Force", sourceName:"Custom", author:"Gearbox Software", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/opposing.html" },
+    { name:"Peggle", sourceName:"Custom", author:"PopCap Games", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/peggle.html" },
+
+    { name:"Super Mario Bros", sourceName:"Custom", author:"Nintendo", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/smb.html" },
+    { name:"Super Mario Bros 2", sourceName:"Custom", author:"Nintendo", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/smb2.html" },
+    { name:"Super Mario Bros 3", sourceName:"Custom", author:"Nintendo", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/smb3.html" },
+
+    { name:"Ms. Pac-Man", sourceName:"Custom", author:"Namco", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/mspacman.html" },
+
+    { name:"Patrick's", sourceName:"Custom", author:"Uranium", resolvedCover:"", resolvedUrl:"https://cdn.jsdelivr.net/gh/Onex558/uranium-source-@main/patricks/index.html" }
+];
 const sources = [
     {
         name: "GN Math Zone",
