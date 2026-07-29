@@ -221,7 +221,7 @@ function renderGames(list) {
         card.style.animationDelay = (Math.min(i, 25) * 0.03) + 's';
         card.innerHTML = `
             <div class="game-image">
-                <span class="game-source-tag">${game.sourceName}</span>
+             
                 <img src="${game.resolvedCover}" alt="${game.name}" loading="lazy"
                     onerror="this.style.display='none'; this.parentElement.querySelector('.fallback').style.display='flex';">
                 <div class="fallback">NO IMAGE<br>${game.name}</div>
