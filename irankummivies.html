@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DriveFlix</title>
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #080808;
+    color: white;
+}
+/* =========================
+   HEADER
+========================= */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #101010;
+    border-bottom: 1px solid #222;
+    padding: 16px 25px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+    color: #00ff88;
+    white-space: nowrap;
+}
+.search {
+    flex: 1;
+    max-width: 600px;
+}
+.search input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #181818;
+    color: white;
+    outline: none;
+}
+.search input:focus {
+    border-color: #00ff88;
+}
+/* =========================
+   HERO
+========================= */
+.hero {
+    padding: 55px 7%;
+    background:
+        linear-gradient(90deg, #050505 20%, transparent),
+        linear-gradient(180deg, #101010, #080808);
+}
+.hero h1 {
+    font-size: 45px;
+    margin-bottom: 12px;
+}
+.hero p {
+    color: #aaa;
+    max-width: 650px;
+}
+/* =========================
+   CATEGORIES
+========================= */
+.categories {
+    padding: 20px 7%;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+}
+.category {
+    background: #181818;
+    border: 1px solid #292929;
+    color: #ddd;
+    padding: 9px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.category:hover,
+.category.active {
+    background: #00ff88;
+    color: #000;
+}
+/* =========================
+   MOVIE GRID
+========================= */
+.container {
+    padding: 20px 7% 50px;
+}
+.movie-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fill, minmax(180px, 1fr));
+    gap: 22px;
+}
+.movie {
+    background: #111;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: .2s;
+    border: 1px solid #222;
+}
+.movie:hover {
+    transform: translateY(-5px);
+    border-color: #00ff88;
+}
+.poster {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    display: block;
+    background: #181818;
+}
+.movie-info {
+    padding: 12px;
+}
+.movie-title {
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+.movie-category {
+    color: #888;
+    font-size: 13px;
+}
+/* =========================
+   PLAYER
+========================= */
+.player-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .94);
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.player {
+    width: min(1100px, 100%);
+    background: #111;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.player-top {
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #222;
+}
+.player-title {
+    font-weight: bold;
+}
+.close {
+    background: #222;
+    border: 0;
+    color: white;
+    font-size: 20px;
+    width: 35px;
+    height: 35px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.close:hover {
+    background: #00ff88;
+    color: #000;
+}
+.video-container {
+    background: #000;
+    aspect-ratio: 16 / 9;
+}
+.video-container iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+/* =========================
+   EMPTY
+========================= */
+.empty {
+    text-align: center;
+    color: #777;
+    padding: 50px;
+    display: none;
+}
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    .logo {
+        text-align: center;
+    }
+    .hero {
+        padding: 35px 5%;
+    }
+    .hero h1 {
+        font-size: 32px;
+    }
+    .container {
+        padding: 15px 5% 40px;
+    }
+    .movie-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+</style>
+</head>
+<body>
+<!-- =========================
+     HEADER
+========================= -->
+<header>
+    <div class="logo">
+        🎬 DriveFlix
+    </div>
+    <div class="search">
+        <input
+            id="search"
+            type="text"
+            placeholder="Search movies..."
+            oninput="renderMovies()"
+        >
+    </div>
+</header>
+<!-- =========================
+     HERO
+========================= -->
+<section class="hero">
+    <h1>Watch Movies</h1>
+    <p>
+        Your movie library powered by Google Drive and GitHub.
+        Choose a movie below to start watching.
+    </p>
+</section>
+<!-- =========================
+     CATEGORIES
+========================= -->
+<div
+    class="categories"
+    id="categories">
+</div>
+<!-- =========================
+     MOVIES
+========================= -->
+<main class="container">
+    <div
+        class="movie-grid"
+        id="movieGrid">
+    </div>
+    <div
+        class="empty"
+        id="empty">
+        No movies found.
+    </div>
+</main>
+<!-- =========================
+     PLAYER
+========================= -->
+<div
+    class="player-overlay"
+    id="playerOverlay">
+    <div class="player">
+        <div class="player-top">
+            <div
+                class="player-title"
+                id="playerTitle">
+                Movie
+            </div>
+            <button
+                class="close"
+                onclick="closePlayer()">
+                ×
+            </button>
+        </div>
+        <div class="video-container">
+            <iframe
+                id="player"
+                allow="autoplay; fullscreen"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+</div>
+<script>
+/* =====================================================
+   MOVIE DATABASE
+===================================================== */
+const movies = [
+    {
+        title: "Spider-Man: Into the Spider-Verse",
+        category: "Movies",
+        driveId:
+        "1Sd1l_LhKRp_2OE5gRJJyPubnZjJccLgQ",
+        poster:
+        "https://placehold.co/400x600/111111/00ff88?text=Spider-Man"
+    }
+];
+/* =====================================================
+   CURRENT CATEGORY
+===================================================== */
+let currentCategory = "All";
+/* =====================================================
+   CREATE CATEGORY BUTTONS
+===================================================== */
+function createCategories() {
+    const categories = [
+        "All",
+        ...new Set(
+            movies.map(movie => movie.category)
+        )
+    ];
+    const container =
+        document.getElementById("categories");
+    container.innerHTML = "";
+    categories.forEach(category => {
+        const button =
+            document.createElement("button");
+        button.className =
+            "category" +
+            (
+                category === currentCategory
+                ? " active"
+                : ""
+            );
+        button.textContent = category;
+        button.onclick = () => {
+            currentCategory = category;
+            createCategories();
+            renderMovies();
+        };
+        container.appendChild(button);
+    });
+}
+/* =====================================================
+   RENDER MOVIES
+===================================================== */
+function renderMovies() {
+    const grid =
+        document.getElementById("movieGrid");
+    const empty =
+        document.getElementById("empty");
+    const search =
+        document
+        .getElementById("search")
+        .value
+        .toLowerCase()
+        .trim();
+    grid.innerHTML = "";
+    const filtered =
+        movies.filter(movie => {
+            const matchesSearch =
+                movie.title
+                .toLowerCase()
+                .includes(search);
+            const matchesCategory =
+                currentCategory === "All" ||
+                movie.category === currentCategory;
+            return (
+                matchesSearch &&
+                matchesCategory
+            );
+        });
+    if (filtered.length === 0) {
+        empty.style.display = "block";
+        return;
+    }
+    empty.style.display = "none";
+    filtered.forEach(movie => {
+        const card =
+            document.createElement("div");
+        card.className = "movie";
+        card.onclick = () => {
+            openMovie(movie);
+        };
+        card.innerHTML = `
+            <img
+                class="poster"
+                src="${movie.poster}"
+                alt="${escapeHTML(movie.title)}"
+                loading="lazy"
+                onerror="this.src='https://placehold.co/400x600/111111/00ff88?text=No+Poster'"
+            >
+            <div class="movie-info">
+                <div class="movie-title">
+                    ${escapeHTML(movie.title)}
+                </div>
+                <div class="movie-category">
+                    ${escapeHTML(movie.category)}
+                </div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+/* =====================================================
+   OPEN MOVIE
+===================================================== */
+function openMovie(movie) {
+    if (
+        !movie.driveId ||
+        movie.driveId ===
+        "YOUR_GOOGLE_DRIVE_FILE_ID"
+    ) {
+        alert(
+            "This movie does not have a Google Drive file."
+        );
+        return;
+    }
+    document
+        .getElementById("playerTitle")
+        .textContent = movie.title;
+    document
+        .getElementById("player")
+        .src =
+        "https://drive.google.com/file/d/" +
+        encodeURIComponent(movie.driveId) +
+        "/preview";
+    document
+        .getElementById("playerOverlay")
+        .style.display = "flex";
+}
+/* =====================================================
+   CLOSE PLAYER
+===================================================== */
+function closePlayer() {
+    document
+        .getElementById("playerOverlay")
+        .style.display = "none";
+    document
+        .getElementById("player")
+        .src = "";
+}
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+function escapeHTML(text) {
+    const div =
+        document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+}
+/* =====================================================
+   ESC KEY
+===================================================== */
+document.addEventListener(
+    "keydown",
+    event => {
+        if (event.key === "Escape") {
+            closePlayer();
+        }
+    }
+);
+/* =====================================================
+   CLICK OUTSIDE PLAYER
+===================================================== */
+document
+.getElementById("playerOverlay")
+.addEventListener(
+    "click",
+    event => {
+        if (
+            event.target.id ===
+            "playerOverlay"
+        ) {
+            closePlayer();
+        }
+    }
+);
+/* =====================================================
+   START SITE
+===================================================== */
+createCategories();
+renderMovies();
+</script>
+</body>
+</html>
