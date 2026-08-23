@@ -10,6 +10,8 @@
             --surface-color: #181818;
             --surface-hover: #282828;
             --primary-color: #1db954;
+            --danger-color: #e74c3c;
+            --danger-hover: #c0392b;
             --text-color: #ffffff;
             --text-secondary: #b3b3b3;
         }
@@ -69,7 +71,7 @@
             font-size: 14px;
         }
 
-        button {
+        button.save-btn {
             background-color: var(--primary-color);
             color: white;
             border: none;
@@ -81,8 +83,25 @@
             transition: background 0.2s;
         }
 
-        button:hover {
+        button.save-btn:hover {
             background-color: #1ed760;
+        }
+
+        .delete-btn {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 5px;
+            transition: background 0.2s;
+        }
+
+        .delete-btn:hover {
+            background-color: var(--danger-hover);
         }
 
         .filter-section {
@@ -188,7 +207,7 @@
                 <input type="file" id="audioFile" accept="audio/*" required>
             </div>
             <div class="form-group full-width">
-                <button type="submit">Save Music</button>
+                <button type="submit" class="save-btn">Save Music</button>
             </div>
         </form>
     </div>
@@ -246,9 +265,17 @@
                     <p><strong>Album:</strong> ${track.album}</p>
                 </div>
                 <audio controls src="${track.audio}"></audio>
+                <button class="delete-btn" onclick="deleteTrack(${track.id})">Delete Song</button>
             `;
             musicGrid.appendChild(card);
         });
+    }
+
+    // Function to delete a track by its unique ID
+    function deleteTrack(id) {
+        musicLibrary = musicLibrary.filter(track => track.id !== id);
+        localStorage.setItem('myMusicLibrary', JSON.stringify(musicLibrary));
+        renderLibrary(filterInput.value);
     }
 
     // Handle form submission
@@ -271,7 +298,6 @@
         try {
             let imageSource = "";
 
-            // Determine image source: File upload takes priority if provided, otherwise URL
             if (imageFile) {
                 imageSource = await readFileAsDataURL(imageFile);
             } else if (imageUrlInput) {
@@ -284,6 +310,7 @@
             const audioBase64 = await readFileAsDataURL(audioFile);
 
             const newTrack = { 
+                id: Date.now(), // Unique identifier for deleting
                 name, 
                 artist, 
                 album, 
