@@ -167,7 +167,7 @@
                 <label for="musicName">Music Name</label>
                 <input type="text" id="musicName" required placeholder="e.g. Song Title">
             </div>
-            <div class="form-group">
+            <div class="src-group form-group">
                 <label for="artistName">Artist Name</label>
                 <input type="text" id="artistName" required placeholder="e.g. Artist Name">
             </div>
@@ -176,8 +176,8 @@
                 <input type="text" id="albumTitle" required placeholder="e.g. Album Name">
             </div>
             <div class="form-group">
-                <label for="albumImage">Album Image (URL or File)</label>
-                <input type="text" id="albumImage" required placeholder="Paste image image URL">
+                <label for="albumImage">Album Image File</label>
+                <input type="file" id="albumImage" accept="image/*" required>
             </div>
             <div class="form-group full-width">
                 <label for="audioFile">Music File (Audio)</label>
@@ -202,18 +202,26 @@
 </div>
 
 <script>
-    // Load saved music from localStorage or initialize empty array
     let musicLibrary = JSON.parse(localStorage.getItem('myMusicLibrary')) || [];
 
     const musicForm = document.getElementById('musicForm');
     const musicGrid = document.getElementById('musicGrid');
     const filterInput = document.getElementById('filterInput');
 
+    // Helper to read files as Base64 strings
+    function readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
     // Function to render library cards
     function renderLibrary(filterQuery = '') {
         musicGrid.innerHTML = '';
 
-        // Filter tracks by artist name
         const filteredTracks = musicLibrary.filter(track => 
             track.artist.toLowerCase().includes(filterQuery.toLowerCase())
         );
@@ -223,7 +231,7 @@
             return;
         }
 
-        filteredTracks.forEach((track, index) => {
+        filteredTracks.forEach((track) => {
             const card = document.createElement('div');
             card.className = 'music-card';
             card.innerHTML = `
@@ -239,23 +247,31 @@
         });
     }
 
-    // Handle form submission and save to local storage
-    musicForm.addEventListener('submit', function(e) {
+    // Handle form submission
+    musicForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
         const name = document.getElementById('musicName').value;
         const artist = document.getElementById('artistName').value;
         const album = document.getElementById('albumTitle').value;
-        const image = document.getElementById('albumImage').value;
-        const audioFileInput = document.getElementById('audioFile');
+        
+        const imageFile = document.getElementById('albumImage').files[0];
+        const audioFile = document.getElementById('audioFile').files[0];
 
-        const file = audioFileInput.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const audioBase64 = event.target.result;
+        if (imageFile && audioFile) {
+            try {
+                // Convert both files to base64 so they can save to LocalStorage
+                const imageBase64 = await readFileAsDataURL(imageFile);
+                const audioBase64 = await readFileAsDataURL(audioFile);
 
-                const newTrack = { name, artist, album, image, audio: audioBase64 };
+                const newTrack = { 
+                    name, 
+                    artist, 
+                    album, 
+                    image: imageBase64, 
+                    audio: audioBase64 
+                };
+
                 musicLibrary.push(newTrack);
                 
                 // Save to browser LocalStorage
@@ -264,8 +280,10 @@
                 // Reset form and re-render
                 musicForm.reset();
                 renderLibrary(filterInput.value);
-            };
-            reader.readAsDataURL(file);
+            } catch (error) {
+                console.error("Error processing files:", error);
+                alert("There was an error uploading your files.");
+            }
         }
     });
 
