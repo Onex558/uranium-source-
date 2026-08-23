@@ -687,7 +687,7 @@
             {
                 title: "Five Nights At Freddy's",
                 category: "Movies",
-                driveId: "YOUR_DRIVE_ID_FOR_FNAF_1",
+                driveId: "YOUR_GOOGLE_DRIVE_FILE_ID",
                 poster: "https://placehold.co/400x600/111111/00ff88?text=FNAF+1"
             },
             {
@@ -754,8 +754,8 @@
         }
 
         function openMovie(movie) {
-            if (!movie.driveId || movie.driveId.includes("YOUR_")) {
-                alert("This movie needs a valid Google Drive file ID.");
+            if (!movie.driveId || movie.driveId === "YOUR_GOOGLE_DRIVE_FILE_ID") {
+                alert("This movie does not have a Google Drive file ID configured yet.");
                 return;
             }
             document.getElementById("playerTitle").textContent = movie.title;
