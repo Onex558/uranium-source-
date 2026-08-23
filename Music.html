@@ -167,7 +167,7 @@
                 <label for="musicName">Music Name</label>
                 <input type="text" id="musicName" required placeholder="e.g. Song Title">
             </div>
-            <div class="src-group form-group">
+            <div class="form-group">
                 <label for="artistName">Artist Name</label>
                 <input type="text" id="artistName" required placeholder="e.g. Artist Name">
             </div>
@@ -176,8 +176,12 @@
                 <input type="text" id="albumTitle" required placeholder="e.g. Album Name">
             </div>
             <div class="form-group">
-                <label for="albumImage">Album Image File</label>
-                <input type="file" id="albumImage" accept="image/*" required>
+                <label for="imageUrl">Album Image URL (Optional)</label>
+                <input type="text" id="imageUrl" placeholder="Paste image URL here">
+            </div>
+            <div class="form-group">
+                <label for="imageFile">Or Upload Album Image File</label>
+                <input type="file" id="imageFile" accept="image/*">
             </div>
             <div class="form-group full-width">
                 <label for="audioFile">Music File (Audio)</label>
@@ -255,35 +259,49 @@
         const artist = document.getElementById('artistName').value;
         const album = document.getElementById('albumTitle').value;
         
-        const imageFile = document.getElementById('albumImage').files[0];
+        const imageUrlInput = document.getElementById('imageUrl').value.trim();
+        const imageFile = document.getElementById('imageFile').files[0];
         const audioFile = document.getElementById('audioFile').files[0];
 
-        if (imageFile && audioFile) {
-            try {
-                // Convert both files to base64 so they can save to LocalStorage
-                const imageBase64 = await readFileAsDataURL(imageFile);
-                const audioBase64 = await readFileAsDataURL(audioFile);
+        if (!audioFile) {
+            alert("Please select an audio file.");
+            return;
+        }
 
-                const newTrack = { 
-                    name, 
-                    artist, 
-                    album, 
-                    image: imageBase64, 
-                    audio: audioBase64 
-                };
+        try {
+            let imageSource = "";
 
-                musicLibrary.push(newTrack);
-                
-                // Save to browser LocalStorage
-                localStorage.setItem('myMusicLibrary', JSON.stringify(musicLibrary));
-
-                // Reset form and re-render
-                musicForm.reset();
-                renderLibrary(filterInput.value);
-            } catch (error) {
-                console.error("Error processing files:", error);
-                alert("There was an error uploading your files.");
+            // Determine image source: File upload takes priority if provided, otherwise URL
+            if (imageFile) {
+                imageSource = await readFileAsDataURL(imageFile);
+            } else if (imageUrlInput) {
+                imageSource = imageUrlInput;
+            } else {
+                alert("Please either provide an image URL or upload an image file.");
+                return;
             }
+
+            const audioBase64 = await readFileAsDataURL(audioFile);
+
+            const newTrack = { 
+                name, 
+                artist, 
+                album, 
+                image: imageSource, 
+                audio: audioBase64 
+            };
+
+            musicLibrary.push(newTrack);
+            
+            // Save to browser LocalStorage
+            localStorage.setItem('myMusicLibrary', JSON.stringify(musicLibrary));
+
+            // Reset form and re-render
+            musicForm.reset();
+            renderLibrary(filterInput.value);
+        } catch (error) {
+            console.error("Error processing files:", error);
+            alert("There was an error processing your files.");
         }
     });
 
