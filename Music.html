@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoundDrive</title>
+    <title>SoundDrive Upload Studio</title>
     <style>
         * {
             box-sizing: border-box;
@@ -14,7 +14,7 @@
             font-family: Arial, Helvetica, sans-serif;
             background: #0f0f0f;
             color: #fff;
-            padding-bottom: 100px;
+            padding-bottom: 120px;
         }
         header {
             position: sticky;
@@ -25,7 +25,8 @@
             padding: 16px 5%;
             display: flex;
             align-items: center;
-            gap: 25px;
+            justify-content: space-between;
+            gap: 20px;
         }
         .logo {
             font-size: 24px;
@@ -35,7 +36,7 @@
         }
         .search-bar {
             flex: 1;
-            max-width: 600px;
+            max-width: 500px;
         }
         .search-bar input {
             width: 100%;
@@ -49,6 +50,20 @@
         }
         .search-bar input:focus {
             border-color: #1db954;
+        }
+        .upload-btn {
+            background: #1db954;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .upload-btn:hover {
+            background: #1ed760;
         }
         .filters-container {
             padding: 20px 5%;
@@ -159,14 +174,69 @@
         .player-controls {
             flex: 1;
             max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
         }
         audio {
             width: 100%;
             outline: none;
+        }
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #333;
+        }
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #1db954;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background: #111;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 6px;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .modal-actions button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-cancel {
+            background: #333;
+            color: white;
+        }
+        .btn-submit {
+            background: #1db954;
+            color: black;
         }
         .empty-state {
             text-align: center;
@@ -184,14 +254,15 @@
         <div class="search-bar">
             <input id="searchInput" type="text" placeholder="Search by song, artist, or album..." oninput="renderMusic()">
         </div>
+        <button class="upload-btn" onclick="openModal()">+ Add Music</button>
     </header>
 
     <div class="filters-container" id="filtersContainer"></div>
 
     <main class="container">
-        <h2 class="section-title">Library</h2>
+        <h2 class="section-title">My Uploaded Music Library</h2>
         <div class="music-grid" id="musicGrid"></div>
-        <div class="empty-state" id="emptyState">No tracks found.</div>
+        <div class="empty-state" id="emptyState">No tracks uploaded yet. Click "+ Add Music" to add your downloads!</div>
     </main>
 
     <div class="player-bar" id="playerBar">
@@ -207,33 +278,82 @@
         </div>
     </div>
 
-    <script>
-        // ADD YOUR MUSIC HERE: Replace URL/paths with your local/hosted music links
-        const tracks = [
-            {
-                title: "Example Song One",
-                artist: "Artist Alpha",
-                album: "Greatest Hits Vol. 1",
-                url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-                cover: "https://placehold.co/300x300/181818/1db954?text=Album+1"
-            },
-            {
-                title: "Example Song Two",
-                artist: "Artist Beta",
-                album: "Late Night Vibes",
-                url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-                cover: "https://placehold.co/300x300/181818/1db954?text=Album+2"
-            },
-            {
-                title: "Example Song Three",
-                artist: "Artist Alpha",
-                album: "Acoustic Sessions",
-                url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-                cover: "https://placehold.co/300x300/181818/1db954?text=Album+3"
-            }
-        ];
+    <!-- Upload Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <h3>Upload Music File</h3>
+            <div class="form-group">
+                <label>Music File (MP3/WAV)</label>
+                <input type="file" id="fileInput" accept="audio/*">
+            </div>
+            <div class="form-group">
+                <label>Song Title</label>
+                <input type="text" id="titleInput" placeholder="e.g. Starboy">
+            </div>
+            <div class="form-group">
+                <label>Artist Name</label>
+                <input type="text" id="artistInput" placeholder="e.g. The Weeknd">
+            </div>
+            <div class="form-group">
+                <label>Album Name</label>
+                <input type="text" id="albumInput" placeholder="e.g. Starboy Album">
+            </div>
+            <div class="form-group">
+                <label>Cover Image URL (Optional)</label>
+                <input type="text" id="coverInput" placeholder="Paste image link here">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-submit" onclick="handleUpload()">Upload Song</button>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        let tracks = [];
         let currentFilter = "All";
+
+        function openModal() {
+            document.getElementById("uploadModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("uploadModal").style.display = "none";
+            document.getElementById("fileInput").value = "";
+            document.getElementById("titleInput").value = "";
+            document.getElementById("artistInput").value = "";
+            document.getElementById("albumInput").value = "";
+            document.getElementById("coverInput").value = "";
+        }
+
+        function handleUpload() {
+            const fileInput = document.getElementById("fileInput");
+            const titleInput = document.getElementById("titleInput").value.trim();
+            const artistInput = document.getElementById("artistInput").value.trim();
+            const albumInput = document.getElementById("albumInput").value.trim();
+            const coverInput = document.getElementById("coverInput").value.trim();
+
+            if (fileInput.files.length === 0) {
+                alert("Please select an audio file.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const fileURL = URL.createObjectURL(file);
+
+            const newTrack = {
+                title: titleInput || file.name.replace(/\.[^/.]+$/, ""),
+                artist: artistInput || "Unknown Artist",
+                album: albumInput || "Single",
+                url: fileURL,
+                cover: coverInput || ""
+            };
+
+            tracks.push(newTrack);
+            closeModal();
+            renderFilters();
+            renderMusic();
+        }
 
         function getFilterList() {
             const artists = [...new Set(tracks.map(t => t.artist))];
@@ -303,7 +423,7 @@
             const player = document.getElementById("audioPlayer");
             document.getElementById("npTitle").textContent = track.title;
             document.getElementById("npArtist").textContent = track.artist;
-            document.getElementById("npArt").src = track.cover;
+            document.getElementById("npArt").src = track.cover || "https://placehold.co/100x100/222/1db954?text=♪";
             
             player.src = track.url;
             player.play();
