@@ -3,440 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoundDrive Upload Studio</title>
+    <title>My Music Library</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --bg-color: #121212;
+            --surface-color: #181818;
+            --surface-hover: #282828;
+            --primary-color: #1db954;
+            --text-color: #ffffff;
+            --text-secondary: #b3b3b3;
         }
+
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #0f0f0f;
-            color: #fff;
-            padding-bottom: 120px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
         }
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: #141414;
-            border-bottom: 1px solid #222;
-            padding: 16px 5%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #1db954;
-            white-space: nowrap;
-        }
-        .search-bar {
-            flex: 1;
-            max-width: 500px;
-        }
-        .search-bar input {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 30px;
-            border: 1px solid #333;
-            background: #202020;
-            color: white;
-            outline: none;
-            font-size: 14px;
-        }
-        .search-bar input:focus {
-            border-color: #1db954;
-        }
-        .upload-btn {
-            background: #1db954;
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-            white-space: nowrap;
-        }
-        .upload-btn:hover {
-            background: #1ed760;
-        }
-        .filters-container {
-            padding: 20px 5%;
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-        }
-        .filter-btn {
-            background: #202020;
-            border: 1px solid #333;
-            color: #ccc;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            white-space: nowrap;
-            font-size: 13px;
-        }
-        .filter-btn:hover, .filter-btn.active {
-            background: #1db954;
-            color: #000;
-            border-color: #1db954;
-        }
+
         .container {
-            padding: 0 5%;
+            max-width: 900px;
+            margin: 0 auto;
         }
-        .section-title {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #aaa;
+
+        h1, h2 {
+            color: var(--text-color);
         }
-        .music-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
-        }
-        .track-card {
-            background: #181818;
-            border: 1px solid #252525;
-            border-radius: 10px;
-            padding: 14px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .track-card:hover {
-            background: #222;
-            border-color: #1db954;
-            transform: translateY(-4px);
-        }
-        .track-art {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            border-radius: 6px;
-            background: #282828;
-            margin-bottom: 10px;
-        }
-        .track-name {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .track-artist, .track-album {
-            color: #888;
-            font-size: 12px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .player-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #121212;
-            border-top: 1px solid #282828;
-            padding: 15px 5%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            z-index: 1000;
-        }
-        .now-playing {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 300px;
-        }
-        .np-art {
-            width: 50px;
-            height: 50px;
-            border-radius: 4px;
-            object-fit: cover;
-            background: #252525;
-        }
-        .np-info .np-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 3px;
-        }
-        .np-info .np-artist {
-            font-size: 12px;
-            color: #888;
-        }
-        .player-controls {
-            flex: 1;
-            max-width: 600px;
-        }
-        audio {
-            width: 100%;
-            outline: none;
-        }
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-        }
-        .modal-content {
-            background: #1a1a1a;
-            padding: 30px;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 400px;
-            border: 1px solid #333;
-        }
-        .modal-content h3 {
+
+        .card {
+            background-color: var(--surface-color);
+            padding: 20px;
+            border-radius: 8px;
             margin-bottom: 20px;
-            color: #1db954;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
         }
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            color: #aaa;
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 14px;
+            color: var(--text-secondary);
             margin-bottom: 5px;
         }
-        .form-group input {
-            width: 100%;
+
+        input[type="text"], input[type="file"] {
             padding: 10px;
-            background: #111;
+            border-radius: 4px;
             border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        button {
+            background-color: var(--primary-color);
             color: white;
-            border-radius: 6px;
-        }
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .modal-actions button {
-            padding: 8px 16px;
-            border-radius: 6px;
             border: none;
-            cursor: pointer;
+            padding: 12px 20px;
+            border-radius: 20px;
             font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
         }
-        .btn-cancel {
-            background: #333;
-            color: white;
+
+        button:hover {
+            background-color: #1ed760;
         }
-        .btn-submit {
-            background: #1db954;
-            color: black;
+
+        .filter-section {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
-        .empty-state {
+
+        .filter-section input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: var(--text-color);
+        }
+
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .music-card {
+            background-color: var(--surface-color);
+            border-radius: 8px;
+            padding: 15px;
+            transition: background-color 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .music-card:hover {
+            background-color: var(--surface-hover);
+        }
+
+        .music-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 4px;
+            background-color: #333;
+        }
+
+        .music-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+        }
+
+        .music-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 5px;
+            height: 35px;
+        }
+
+        .no-music {
+            color: var(--text-secondary);
+            grid-column: span 100;
             text-align: center;
-            color: #666;
             padding: 40px;
-            grid-column: 1 / -1;
-            display: none;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">🎵 SoundDrive</div>
-        <div class="search-bar">
-            <input id="searchInput" type="text" placeholder="Search by song, artist, or album..." oninput="renderMusic()">
-        </div>
-        <button class="upload-btn" onclick="openModal()">+ Add Music</button>
-    </header>
+<div class="container">
+    <h1>My Personal Music Library</h1>
 
-    <div class="filters-container" id="filtersContainer"></div>
-
-    <main class="container">
-        <h2 class="section-title">My Uploaded Music Library</h2>
-        <div class="music-grid" id="musicGrid"></div>
-        <div class="empty-state" id="emptyState">No tracks uploaded yet. Click "+ Add Music" to add your downloads!</div>
-    </main>
-
-    <div class="player-bar" id="playerBar">
-        <div class="now-playing">
-            <img id="npArt" class="np-art" src="https://placehold.co/100x100/222/1db954?text=♪" alt="Art">
-            <div class="np-info">
-                <div id="npTitle" class="np-title">Select a track</div>
-                <div id="npArtist" class="np-artist">-</div>
+    <!-- Add Music Form -->
+    <div class="card">
+        <h2>Add New Music</h2>
+        <form id="musicForm">
+            <div class="form-group">
+                <label for="musicName">Music Name</label>
+                <input type="text" id="musicName" required placeholder="e.g. Song Title">
             </div>
-        </div>
-        <div class="player-controls">
-            <audio id="audioPlayer" controls></audio>
-        </div>
+            <div class="form-group">
+                <label for="artistName">Artist Name</label>
+                <input type="text" id="artistName" required placeholder="e.g. Artist Name">
+            </div>
+            <div class="form-group">
+                <label for="albumTitle">Album Title</label>
+                <input type="text" id="albumTitle" required placeholder="e.g. Album Name">
+            </div>
+            <div class="form-group">
+                <label for="albumImage">Album Image (URL or File)</label>
+                <input type="text" id="albumImage" required placeholder="Paste image image URL">
+            </div>
+            <div class="form-group full-width">
+                <label for="audioFile">Music File (Audio)</label>
+                <input type="file" id="audioFile" accept="audio/*" required>
+            </div>
+            <div class="form-group full-width">
+                <button type="submit">Save Music</button>
+            </div>
+        </form>
     </div>
 
-    <!-- Upload Modal -->
-    <div class="modal" id="uploadModal">
-        <div class="modal-content">
-            <h3>Upload Music File</h3>
-            <div class="form-group">
-                <label>Music File (MP3/WAV)</label>
-                <input type="file" id="fileInput" accept="audio/*">
-            </div>
-            <div class="form-group">
-                <label>Song Title</label>
-                <input type="text" id="titleInput" placeholder="e.g. Starboy">
-            </div>
-            <div class="form-group">
-                <label>Artist Name</label>
-                <input type="text" id="artistInput" placeholder="e.g. The Weeknd">
-            </div>
-            <div class="form-group">
-                <label>Album Name</label>
-                <input type="text" id="albumInput" placeholder="e.g. Starboy Album">
-            </div>
-            <div class="form-group">
-                <label>Cover Image URL (Optional)</label>
-                <input type="text" id="coverInput" placeholder="Paste image link here">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-                <button class="btn-submit" onclick="handleUpload()">Upload Song</button>
-            </div>
-        </div>
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <input type="text" id="filterInput" placeholder="Filter by artist name...">
     </div>
 
-    <script>
-        let tracks = [];
-        let currentFilter = "All";
+    <!-- Music Display Grid -->
+    <h2>Library</h2>
+    <div class="music-grid" id="musicGrid">
+        <!-- Dynamic cards will load here -->
+    </div>
+</div>
 
-        function openModal() {
-            document.getElementById("uploadModal").style.display = "flex";
+<script>
+    // Load saved music from localStorage or initialize empty array
+    let musicLibrary = JSON.parse(localStorage.getItem('myMusicLibrary')) || [];
+
+    const musicForm = document.getElementById('musicForm');
+    const musicGrid = document.getElementById('musicGrid');
+    const filterInput = document.getElementById('filterInput');
+
+    // Function to render library cards
+    function renderLibrary(filterQuery = '') {
+        musicGrid.innerHTML = '';
+
+        // Filter tracks by artist name
+        const filteredTracks = musicLibrary.filter(track => 
+            track.artist.toLowerCase().includes(filterQuery.toLowerCase())
+        );
+
+        if (filteredTracks.length === 0) {
+            musicGrid.innerHTML = '<div class="no-music">No music found.</div>';
+            return;
         }
 
-        function closeModal() {
-            document.getElementById("uploadModal").style.display = "none";
-            document.getElementById("fileInput").value = "";
-            document.getElementById("titleInput").value = "";
-            document.getElementById("artistInput").value = "";
-            document.getElementById("albumInput").value = "";
-            document.getElementById("coverInput").value = "";
-        }
+        filteredTracks.forEach((track, index) => {
+            const card = document.createElement('div');
+            card.className = 'music-card';
+            card.innerHTML = `
+                <img src="${track.image}" alt="${track.album}">
+                <div class="music-info">
+                    <h3>${track.name}</h3>
+                    <p><strong>Artist:</strong> ${track.artist}</p>
+                    <p><strong>Album:</strong> ${track.album}</p>
+                </div>
+                <audio controls src="${track.audio}"></audio>
+            `;
+            musicGrid.appendChild(card);
+        });
+    }
 
-        function handleUpload() {
-            const fileInput = document.getElementById("fileInput");
-            const titleInput = document.getElementById("titleInput").value.trim();
-            const artistInput = document.getElementById("artistInput").value.trim();
-            const albumInput = document.getElementById("albumInput").value.trim();
-            const coverInput = document.getElementById("coverInput").value.trim();
+    // Handle form submission and save to local storage
+    musicForm.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-            if (fileInput.files.length === 0) {
-                alert("Please select an audio file.");
-                return;
-            }
+        const name = document.getElementById('musicName').value;
+        const artist = document.getElementById('artistName').value;
+        const album = document.getElementById('albumTitle').value;
+        const image = document.getElementById('albumImage').value;
+        const audioFileInput = document.getElementById('audioFile');
 
-            const file = fileInput.files[0];
-            const fileURL = URL.createObjectURL(file);
+        const file = audioFileInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const audioBase64 = event.target.result;
 
-            const newTrack = {
-                title: titleInput || file.name.replace(/\.[^/.]+$/, ""),
-                artist: artistInput || "Unknown Artist",
-                album: albumInput || "Single",
-                url: fileURL,
-                cover: coverInput || ""
-            };
-
-            tracks.push(newTrack);
-            closeModal();
-            renderFilters();
-            renderMusic();
-        }
-
-        function getFilterList() {
-            const artists = [...new Set(tracks.map(t => t.artist))];
-            const albums = [...new Set(tracks.map(t => t.album))];
-            return ["All", ...artists, ...albums];
-        }
-
-        function renderFilters() {
-            const container = document.getElementById("filtersContainer");
-            const filters = getFilterList();
-            container.innerHTML = "";
-
-            filters.forEach(filter => {
-                const btn = document.createElement("button");
-                btn.className = "filter-btn" + (filter === currentFilter ? " active" : "");
-                btn.textContent = filter;
-                btn.onclick = () => {
-                    currentFilter = filter;
-                    renderFilters();
-                    renderMusic();
-                };
-                container.appendChild(btn);
-            });
-        }
-
-        function renderMusic() {
-            const grid = document.getElementById("musicGrid");
-            const empty = document.getElementById("emptyState");
-            const searchQuery = document.getElementById("searchInput").value.toLowerCase().trim();
-            
-            grid.innerHTML = "";
-
-            const filteredTracks = tracks.filter(track => {
-                const matchesSearch = track.title.toLowerCase().includes(searchQuery) ||
-                                      track.artist.toLowerCase().includes(searchQuery) ||
-                                      track.album.toLowerCase().includes(searchQuery);
+                const newTrack = { name, artist, album, image, audio: audioBase64 };
+                musicLibrary.push(newTrack);
                 
-                const matchesFilter = currentFilter === "All" || 
-                                      track.artist === currentFilter || 
-                                      track.album === currentFilter;
+                // Save to browser LocalStorage
+                localStorage.setItem('myMusicLibrary', JSON.stringify(musicLibrary));
 
-                return matchesSearch && matchesFilter;
-            });
-
-            if (filteredTracks.length === 0) {
-                empty.style.display = "block";
-                return;
-            }
-
-            empty.style.display = "none";
-
-            filteredTracks.forEach(track => {
-                const card = document.createElement("div");
-                card.className = "track-card";
-                card.onclick = () => playTrack(track);
-                card.innerHTML = `
-                    <img class="track-art" src="${track.cover}" alt="${escapeHTML(track.title)}" onerror="this.src='https://placehold.co/300x300/181818/1db954?text=♪'">
-                    <div class="track-name" title="${escapeHTML(track.title)}">${escapeHTML(track.title)}</div>
-                    <div class="track-artist">${escapeHTML(track.artist)}</div>
-                    <div class="track-album">${escapeHTML(track.album)}</div>
-                `;
-                grid.appendChild(card);
-            });
+                // Reset form and re-render
+                musicForm.reset();
+                renderLibrary(filterInput.value);
+            };
+            reader.readAsDataURL(file);
         }
+    });
 
-        function playTrack(track) {
-            const player = document.getElementById("audioPlayer");
-            document.getElementById("npTitle").textContent = track.title;
-            document.getElementById("npArtist").textContent = track.artist;
-            document.getElementById("npArt").src = track.cover || "https://placehold.co/100x100/222/1db954?text=♪";
-            
-            player.src = track.url;
-            player.play();
-        }
+    // Handle filter typing
+    filterInput.addEventListener('input', function(e) {
+        renderLibrary(e.target.value);
+    });
 
-        function escapeHTML(text) {
-            const div = document.createElement("div");
-            div.textContent = text;
-            return div.innerHTML;
-        }
+    // Initial render on page load
+    renderLibrary();
+</script>
 
-        renderFilters();
-        renderMusic();
-    </script>
 </body>
 </html>
