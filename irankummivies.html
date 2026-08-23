@@ -685,6 +685,12 @@
                 poster: "https://placehold.co/400x600/111111/00ff88?text=Joker"
             },
             {
+                title: "Five Nights At Freddy's",
+                category: "Movies",
+                driveId: "YOUR_DRIVE_ID_FOR_FNAF_1",
+                poster: "https://placehold.co/400x600/111111/00ff88?text=FNAF+1"
+            },
+            {
                 title: "Five Nights At Freddy's 2",
                 category: "Movies",
                 driveId: "1dW1XsOWtiL0mGHOFIB8n0rEhLPoa2buJ",
@@ -748,12 +754,11 @@
         }
 
         function openMovie(movie) {
-            if (!movie.driveId || movie.driveId === "YOUR_GOOGLE_DRIVE_FILE_ID") {
-                alert("This movie does not have a Google Drive file.");
+            if (!movie.driveId || movie.driveId.includes("YOUR_")) {
+                alert("This movie needs a valid Google Drive file ID.");
                 return;
             }
             document.getElementById("playerTitle").textContent = movie.title;
-            // Updated preview URL format
             document.getElementById("player").src = `https://drive.google.com/file/d/${encodeURIComponent(movie.driveId)}/preview`;
             document.getElementById("playerOverlay").style.display = "flex";
         }
